@@ -76,7 +76,7 @@ macro(trace_library)
         message(FATAL_ERROR "NAME and INSTALL_SCRIPT are required arguments")
     endif()
     
-    find_library(${LIBRARY_CONTROLLER_NAME}_FOUND ${LIBRARY_CONTROLLER_NAME})
+    find_library(${LIBRARY_CONTROLLER_NAME}_FOUND NAMES ${LIBRARY_CONTROLLER_NAME})
     
     if(NOT ${LIBRARY_CONTROLLER_NAME}_FOUND)
         download_package(${LIBRARY_CONTROLLER_INSTALL_SCRIPT})
@@ -84,7 +84,30 @@ macro(trace_library)
         message(STATUS "${LIBRARY_CONTROLLER_NAME} was found")
     endif()
     
-    find_library(${LIBRARY_CONTROLLER_NAME}_FOUND ${LIBRARY_CONTROLLER_NAME} REQUIRED)
+    find_library(${LIBRARY_CONTROLLER_NAME}_FOUND NAMES ${LIBRARY_CONTROLLER_NAME} REQUIRED)
+
+endmacro()
+
+macro(trace_file)
+    set(oneValueArgs "INSTALL_SCRIPT" "LOCATION" "NAME" "EXTENSION")
+    set(multiValueArgs "COMPONENTS")
+    cmake_parse_arguments(FILE_CONTROLLER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if((NOT DEFINED FILE_CONTROLLER_NAME) OR (NOT DEFINED FILE_CONTROLLER_INSTALL_SCRIPT) OR (NOT DEFINED FILE_CONTROLLER_LOCATION) OR (NOT DEFINED FILE_CONTROLLER_EXTENSION))
+        message(FATAL_ERROR "NAME, INSTALL_SCRIPT, LOCATION and EXTENSION are required arguments")
+    endif()
+
+    set(CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH FALSE)
+    find_file(${FILE_CONTROLLER_NAME}_FOUND NAMES "${FILE_CONTROLLER_NAME}.${FILE_CONTROLLER_EXTENSION}" PATHS ${FILE_CONTROLLER_LOCATION})
+    
+    if(NOT ${FILE_CONTROLLER_NAME}_FOUND)
+        download_file(${FILE_CONTROLLER_INSTALL_SCRIPT})
+    else()
+        message(STATUS "${FILE_CONTROLLER_NAME} was found")
+    endif()
+    
+    find_file(${FILE_CONTROLLER_NAME}_FOUND NAMES "${FILE_CONTROLLER_NAME}.${FILE_CONTROLLER_EXTENSION}" PATHS ${FILE_CONTROLLER_LOCATION} REQUIRED)
+    set(CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH TRUE)
 
 endmacro()
 
@@ -93,3 +116,9 @@ macro(download_package INSTALL_SCRIPT)
     set_shell_program(${INSTALL_SCRIPT})
     execute_process(COMMAND ${SCRIPT_RUNNER} ${SCRIPT_ARG} ${INSTALL_SCRIPT} ${CMAKE_BUILD_TYPE} ${CMAKE_INSTALL_PREFIX} ${PROJECT_SOURCE_DIR})
 endmacro(download_package)
+
+macro(download_file INSTALL_SCRIPT)
+    validate_shell_script_extension(${INSTALL_SCRIPT})
+    set_shell_program(${INSTALL_SCRIPT})
+    execute_process(COMMAND ${SCRIPT_RUNNER} ${SCRIPT_ARG} ${INSTALL_SCRIPT} ${PROJECT_SOURCE_DIR})
+endmacro(download_file)
