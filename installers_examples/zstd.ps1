@@ -10,3 +10,7 @@ if (($buildMode -eq "Debug" -or $buildMode -eq "Release") -and ($installPrefix -
     cmake -S "$moduleDestination/modules/zstd/build/cmake" -B "$moduleDestination/dependencies/windows/zstd" -DCMAKE_INSTALL_PREFIX="$installPrefix"
     cmake --build "$moduleDestination/dependencies/windows/zstd" --config "$buildMode" --target install
 }
+else
+{
+    Write-Output "Invalid build type or install path. Please provide either 'Debug' or 'Release', a valid prefix path and a valid Module Destination"
+}
