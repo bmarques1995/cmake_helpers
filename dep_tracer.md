@@ -9,6 +9,15 @@ Args:
 - VERSION: Optional, referred to the package version
 - COMPONENTS: Optional, referred to the package components, like Qt6 Widgets
 
-Disclaimer: The macro uses `CMAKE_BUILD_TYPE` to define the build type, Debug/Release, and `CMAKE_INSTALL_PREFIX` to define the binaries installation dir. These values will be sent to the builder as command line arguments.
+`trace_library(<NAME> <INSTALL_SCRIPT>)`:
+this function is used to search for a library, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
+Uses the same principle of the `trace_dependency`.
 
-All other functions are auxiliars.
+Args:
+- NAME: is the name of the dependency
+- INSTALL_SCRIPT: script used to download, compile and install the dependency, for Linux distros it calls bash for a `.sh` script, on Windows the supported files are `.cmd` and `.bat` for command prompt and `.ps1` for powershell. Two sample scripts are avaliable at `./installers_examples/`.
+
+
+Disclaimer: These macros use `CMAKE_BUILD_TYPE` to define the build type, Debug/Release, and `CMAKE_INSTALL_PREFIX` to define the binaries installation dir. These values will be sent to the builder as command line arguments.
+
+All other functions are auxiliars and are not supposed to be used as separated functions/macros.

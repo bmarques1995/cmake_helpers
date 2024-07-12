@@ -57,7 +57,6 @@ macro(trace_dependency)
         foreach(COMPONENT IN LISTS PACKAGE_CONTROLLER_COMPONENTS)
             if(NOT ${PACKAGE_CONTROLLER_NAME}${COMPONENT}_FOUND)
                 download_package(${PACKAGE_CONTROLLER_INSTALL_SCRIPT})
-                find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS})
             else()
                 message(STATUS "${PACKAGE_CONTROLLER_NAME}${COMPONENT} was found")
             endif()
@@ -65,6 +64,27 @@ macro(trace_dependency)
     endif()
     
     find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS} REQUIRED)
+
+endmacro()
+
+macro(trace_library)
+    set(oneValueArgs "INSTALL_SCRIPT" "NAME")
+    set(multiValueArgs "COMPONENTS")
+    cmake_parse_arguments(LIBRARY_CONTROLLER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if((NOT DEFINED LIBRARY_CONTROLLER_NAME) OR (NOT DEFINED LIBRARY_CONTROLLER_INSTALL_SCRIPT))
+        message(FATAL_ERROR "NAME and INSTALL_SCRIPT are required arguments")
+    endif()
+    
+    find_library(${LIBRARY_CONTROLLER_NAME}_FOUND ${LIBRARY_CONTROLLER_NAME})
+    
+    if(NOT ${LIBRARY_CONTROLLER_NAME}_FOUND)
+        download_package(${LIBRARY_CONTROLLER_INSTALL_SCRIPT})
+    else()
+        message(STATUS "${LIBRARY_CONTROLLER_NAME} was found")
+    endif()
+    
+    find_library(${LIBRARY_CONTROLLER_NAME}_FOUND ${LIBRARY_CONTROLLER_NAME} REQUIRED)
 
 endmacro()
 
