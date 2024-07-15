@@ -29,3 +29,56 @@ macro(set_cxx_project_standards TARGET_NAME STANDARD_VERSION USES_C)
     endif()
 
 endmacro()
+
+macro(target_installation_behaviour)
+
+    set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE")
+    set(options "USE_SHARE")
+    cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    message(STATUS "The target include directories must be set with \"\$\<BUILD_INTERFACE: \$\{include_dir\}\>\" and \"\$\<INSTALL_INTERFACE: \$\{include_dir\}\>\"\nOtherwise, the behaviour can be incorrect")
+    
+    if((NOT DEFINED PACKAGE_TARGET_NAME) 
+        OR (NOT DEFINED PACKAGE_CONFIG_FILE)
+        OR (NOT DEFINED PACKAGE_VERSION)
+        OR (NOT DEFINED PACKAGE_PROJECT_NAME)
+        OR (NOT DEFINED PACKAGE_NAMESPACE))
+        message(FATAL_ERROR "NAME and INSTALL_SCRIPT are required arguments")
+    endif()
+
+    set(CONFIG_BASE_DIR "lib/cmake/")
+    if(PACKAGE_USE_SHARE)
+        set(CONFIG_BASE_DIR "share/cmake/")
+    endif()
+
+    set(TARGET_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set(TARGET_VERSION_CONFIG "${TARGET_GENERATED_DIR}/${PACKAGE_PROJECT_NAME}ConfigVersion.cmake")
+    set(TARGET_PROJECT_CONFIG "${TARGET_GENERATED_DIR}/${PACKAGE_PROJECT_NAME}Config.cmake")
+    set(TARGET_TARGETS_EXPORT_NAME "${PACKAGE_PROJECT_NAME}Targets")
+    set(TARGET_CONFIG_INSTALL_DIR "${CONFIG_BASE_DIR}${PACKAGE_PROJECT_NAME}")
+    set(TARGET_NAMESPACE "${PACKAGE_NAMESPACE}::")
+    set(TARGET_VERSION ${PACKAGE_VERSION})
+
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+        "${TARGET_VERSION_CONFIG}" VERSION ${TARGET_VERSION} COMPATIBILITY SameMajorVersion
+    )
+    configure_file("${PACKAGE_CONFIG_FILE}" "${TARGET_PROJECT_CONFIG}" @ONLY)
+
+    # Install cmake config files
+    install(
+        FILES "${TARGET_PROJECT_CONFIG}" "${TARGET_VERSION_CONFIG}"
+        DESTINATION "${TARGET_CONFIG_INSTALL_DIR}")
+
+    install(
+        EXPORT "${TARGET_TARGETS_EXPORT_NAME}"
+        NAMESPACE "${TARGET_NAMESPACE}"
+        DESTINATION "${TARGET_CONFIG_INSTALL_DIR}")
+
+    install(TARGETS ${PACKAGE_TARGET_NAME}
+            EXPORT ${TARGET_TARGETS_EXPORT_NAME} 
+            RUNTIME DESTINATION "bin"
+            ARCHIVE DESTINATION "lib"
+            LIBRARY DESTINATION "lib")
+
+endmacro()
