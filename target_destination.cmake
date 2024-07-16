@@ -34,7 +34,7 @@ macro(target_installation_behaviour)
 
     set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE")
     set(options "USE_SHARE")
-    set(multiValueArgs "HEADER_INPUT" "HEADER_OUTPUT")
+    set(multiValueArgs "HEADER_INPUT" "HEADER_OUTPUT" "EXTRA_HEADER_EXTENSION_PATTERN")
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     message(STATUS "The target include directories must be set with \"\$\<BUILD_INTERFACE: \$\{include_dir\}\>\" and \"\$\<INSTALL_INTERFACE: \$\{include_dir\}\>\"\nOtherwise, the behaviour can be incorrect")
@@ -95,7 +95,14 @@ macro(target_installation_behaviour)
 
         install(DIRECTORY ${INPUT_FOLDER}
                 DESTINATION ${OUTPUT_FOLDER}
-                FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+                FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "*.hh" PATTERN "*.hxx" PATTERN "*.h++" 
+                PATTERN "*.i" PATTERN "*.ipp" PATTERN "*.ii" PATTERN "*.ixx" PATTERN "*.i++" PATTERN "*.inl" PATTERN "*.inc")
+        
+        foreach(PATTERN IN LISTS PACKAGE_EXTRA_HEADER_EXTENSION)
+            install(DIRECTORY ${INPUT_FOLDER}
+                    DESTINATION ${OUTPUT_FOLDER}
+                    FILES_MATCHING PATTERN "${PATTERN}")
+        endforeach()
     endforeach()
 
 endmacro()
