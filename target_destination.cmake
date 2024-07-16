@@ -37,7 +37,7 @@ macro(target_installation_behaviour)
     set(multiValueArgs "HEADER_INPUT" "HEADER_OUTPUT" "EXTRA_HEADER_EXTENSION_PATTERN")
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    message(STATUS "The target include directories must be set with \"\$\<BUILD_INTERFACE: \$\{include_dir\}\>\" and \"\$\<INSTALL_INTERFACE: \$\{include_dir\}\>\"\nOtherwise, the behaviour can be incorrect")
+    message(STATUS "The target include directories must be set with \"\$\<BUILD_INTERFACE: \$\{include_dir\}\>\" and \"\$\<INSTALL_INTERFACE: \$\{include_dir\}\>\".\nOtherwise, the behaviour can be incorrect")
     
     if((NOT DEFINED PACKAGE_TARGET_NAME) 
         OR (NOT DEFINED PACKAGE_CONFIG_FILE)
@@ -84,20 +84,17 @@ macro(target_installation_behaviour)
 
     list(LENGTH PACKAGE_HEADER_INPUT IN_LENGTH)
     list(LENGTH PACKAGE_HEADER_OUTPUT OUT_LENGTH)
-    if(${IN_LENGTH} NOT EQUAL ${OUT_LENGTH})
-        message("Each input header folder must be associated to an output header folder")
+    if(NOT (${IN_LENGTH} EQUAL ${OUT_LENGTH}))
+        message(FATAL_ERROR "Each input header folder must be associated to an output header folder")
     endif()
 
-    foreach(INDEX RANGE 0 ${OUT_LENGTH})
-        # Get the elements at the current index
-        list(GET PACKAGE_HEADER_INPUT ${INDEX} INPUT_FOLDER)
-        list(GET PACKAGE_HEADER_OUTPUT ${INDEX} OUTPUT_FOLDER)
 
+    foreach(INPUT_FOLDER OUTPUT_FOLDER IN ZIP_LISTS PACKAGE_HEADER_INPUT PACKAGE_HEADER_OUTPUT)
         install(DIRECTORY ${INPUT_FOLDER}
                 DESTINATION ${OUTPUT_FOLDER}
                 FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "*.hh" PATTERN "*.hxx" PATTERN "*.h++" 
                 PATTERN "*.i" PATTERN "*.ipp" PATTERN "*.ii" PATTERN "*.ixx" PATTERN "*.i++" PATTERN "*.inl" PATTERN "*.inc")
-        
+
         foreach(PATTERN IN LISTS PACKAGE_EXTRA_HEADER_EXTENSION)
             install(DIRECTORY ${INPUT_FOLDER}
                     DESTINATION ${OUTPUT_FOLDER}
