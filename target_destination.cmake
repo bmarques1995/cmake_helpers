@@ -34,6 +34,7 @@ macro(target_installation_behaviour)
 
     set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE")
     set(options "USE_SHARE")
+    set(multiValueArgs "HEADER_INPUT" "HEADER_OUTPUT")
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     message(STATUS "The target include directories must be set with \"\$\<BUILD_INTERFACE: \$\{include_dir\}\>\" and \"\$\<INSTALL_INTERFACE: \$\{include_dir\}\>\"\nOtherwise, the behaviour can be incorrect")
@@ -80,5 +81,21 @@ macro(target_installation_behaviour)
             RUNTIME DESTINATION "bin"
             ARCHIVE DESTINATION "lib"
             LIBRARY DESTINATION "lib")
+
+    list(LENGTH PACKAGE_HEADER_INPUT IN_LENGTH)
+    list(LENGTH PACKAGE_HEADER_OUTPUT OUT_LENGTH)
+    if(${IN_LENGTH} NOT EQUAL ${OUT_LENGTH})
+        message("Each input header folder must be associated to an output header folder")
+    endif()
+
+    foreach(INDEX RANGE 0 ${OUT_LENGTH})
+        # Get the elements at the current index
+        list(GET PACKAGE_HEADER_INPUT ${INDEX} INPUT_FOLDER)
+        list(GET PACKAGE_HEADER_OUTPUT ${INDEX} OUTPUT_FOLDER)
+
+        install(DIRECTORY ${INPUT_FOLDER}
+                DESTINATION ${OUTPUT_FOLDER}
+                FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+    endforeach()
 
 endmacro()
