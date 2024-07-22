@@ -1,6 +1,6 @@
 # dep_tracer
 
-`trace_dependency(<NAME> <INSTALL_SCRIPT> [<VERSION>] [COMPONENTS ...])`:
+`trace_dependency(<NAME> <INSTALL_SCRIPT> [<VERSION>] [COMPONENTS ...] [USE_VSTOOLS] [NAMESPACED] [<ALIAS_NAME>])`:
 this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
@@ -8,6 +8,9 @@ Args:
 - INSTALL_SCRIPT: script used to download, compile and install the dependency, for Linux distros it calls bash for a `.sh` script, on Windows the supported files are `.cmd` and `.bat` for command prompt and `.ps1` for powershell. Two sample scripts are avaliable at `./installers_examples/`.
 - VERSION: Optional, referred to the package version
 - COMPONENTS: Optional, referred to the package components, like Qt6 Widgets
+- USE_VSTOOLS: Optional, referred to use the vs compiler path
+- NAMESPACED: Optional, referred if you will find a package by namespace after installation
+- ALIAS_NAME: Optional, name of the namespaced package, is required if NAMESPACED is TRUE
 
 `trace_library(<NAME> <INSTALL_SCRIPT>)`:
 this function is used to search for a library, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
@@ -27,3 +30,6 @@ Args:
 - INSTALL_SCRIPT: script used to download, compile and install the dependency, for Linux distros it calls bash for a `.sh` script, on Windows the supported files are `.cmd` and `.bat` for command prompt and `.ps1` for powershell.
 
 All other functions are auxiliars and are not supposed to be used as separated functions/macros.
+
+`trace_installable_file(<NAME> <INSTALL_SCRIPT>)`:
+Same for `trace_file`, but will compile a code instead of download it

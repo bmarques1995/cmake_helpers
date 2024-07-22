@@ -31,13 +31,17 @@ function(set_shell_program SCRIPT_FILENAME)
 endfunction()
 
 macro(trace_dependency)
-    set(oneValueArgs "INSTALL_SCRIPT" "NAME" "VERSION")
-    set(options "USE_VSTOOLS")
+    set(oneValueArgs "INSTALL_SCRIPT" "NAME" "VERSION" "ALIAS_NAME")
+    set(options_values "USE_VSTOOLS" "NAMESPACED")
     set(multiValueArgs "COMPONENTS")
-    cmake_parse_arguments(PACKAGE_CONTROLLER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(PACKAGE_CONTROLLER "${options_values}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if((NOT DEFINED PACKAGE_CONTROLLER_NAME) OR (NOT DEFINED PACKAGE_CONTROLLER_INSTALL_SCRIPT))
         message(FATAL_ERROR "NAME and INSTALL_SCRIPT are required arguments")
+    endif()
+
+    if((PACKAGE_CONTROLLER_NAMESPACED) AND (NOT DEFINED PACKAGE_CONTROLLER_ALIAS_NAME))
+        message(FATAL_ERROR "if NAMESPACED is set you must set alse ALIAS_NAME")
     endif()
 
     set(TREATED_USE_VSTOOLS FALSE)
@@ -50,7 +54,12 @@ macro(trace_dependency)
         set(VERSION_ARG VERSION)
     endif()
     
-    find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS})
+    if(PACKAGE_CONTROLLER_NAMESPACED)
+        find_package(${PACKAGE_CONTROLLER_ALIAS_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION})
+    else()
+        find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS})
+    endif()
+
     list(LENGTH PACKAGE_CONTROLLER_COMPONENTS NUMBER_OF_COMPONENTS)
 
     if(NUMBER_OF_COMPONENTS EQUAL 0)
@@ -69,8 +78,11 @@ macro(trace_dependency)
         endforeach()
     endif()
     
-    find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS} REQUIRED)
-
+    if(PACKAGE_CONTROLLER_NAMESPACED)
+        find_package(${PACKAGE_CONTROLLER_ALIAS_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} REQUIRED)
+    else()
+        find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS} REQUIRED)
+    endif()
 endmacro()
 
 macro(trace_library)
@@ -108,6 +120,29 @@ macro(trace_file)
     
     if(NOT ${FILE_CONTROLLER_NAME}_FOUND)
         download_file(${FILE_CONTROLLER_INSTALL_SCRIPT})
+    else()
+        message(STATUS "${FILE_CONTROLLER_NAME} was found")
+    endif()
+    
+    find_file(${FILE_CONTROLLER_NAME}_FOUND NAMES "${FILE_CONTROLLER_NAME}.${FILE_CONTROLLER_EXTENSION}" PATHS ${FILE_CONTROLLER_LOCATION} REQUIRED)
+    set(CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH TRUE)
+
+endmacro()
+
+macro(trace_installable_file)
+    set(oneValueArgs "INSTALL_SCRIPT" "LOCATION" "NAME" "EXTENSION")
+    set(multiValueArgs "COMPONENTS")
+    cmake_parse_arguments(FILE_CONTROLLER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if((NOT DEFINED FILE_CONTROLLER_NAME) OR (NOT DEFINED FILE_CONTROLLER_INSTALL_SCRIPT) OR (NOT DEFINED FILE_CONTROLLER_LOCATION) OR (NOT DEFINED FILE_CONTROLLER_EXTENSION))
+        message(FATAL_ERROR "NAME, INSTALL_SCRIPT, LOCATION and EXTENSION are required arguments")
+    endif()
+
+    set(CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH FALSE)
+    find_file(${FILE_CONTROLLER_NAME}_FOUND NAMES "${FILE_CONTROLLER_NAME}.${FILE_CONTROLLER_EXTENSION}" PATHS ${FILE_CONTROLLER_LOCATION})
+    
+    if(NOT ${FILE_CONTROLLER_NAME}_FOUND)
+        download_package(${FILE_CONTROLLER_INSTALL_SCRIPT} FALSE)
     else()
         message(STATUS "${FILE_CONTROLLER_NAME} was found")
     endif()
