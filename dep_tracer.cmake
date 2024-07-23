@@ -31,17 +31,13 @@ function(set_shell_program SCRIPT_FILENAME)
 endfunction()
 
 macro(trace_dependency)
-    set(oneValueArgs "INSTALL_SCRIPT" "NAME" "VERSION" "ALIAS_NAME")
-    set(options_values "USE_VSTOOLS" "NAMESPACED")
+    set(oneValueArgs "INSTALL_SCRIPT" "NAME" "VERSION")
+    set(options "USE_VSTOOLS")
     set(multiValueArgs "COMPONENTS")
-    cmake_parse_arguments(PACKAGE_CONTROLLER "${options_values}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(PACKAGE_CONTROLLER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if((NOT DEFINED PACKAGE_CONTROLLER_NAME) OR (NOT DEFINED PACKAGE_CONTROLLER_INSTALL_SCRIPT))
         message(FATAL_ERROR "NAME and INSTALL_SCRIPT are required arguments")
-    endif()
-
-    if((PACKAGE_CONTROLLER_NAMESPACED) AND (NOT DEFINED PACKAGE_CONTROLLER_ALIAS_NAME))
-        message(FATAL_ERROR "if NAMESPACED is set you must set alse ALIAS_NAME")
     endif()
 
     set(TREATED_USE_VSTOOLS FALSE)
@@ -54,12 +50,7 @@ macro(trace_dependency)
         set(VERSION_ARG VERSION)
     endif()
     
-    if(PACKAGE_CONTROLLER_NAMESPACED)
-        find_package(${PACKAGE_CONTROLLER_ALIAS_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION})
-    else()
-        find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS})
-    endif()
-
+    find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS})
     list(LENGTH PACKAGE_CONTROLLER_COMPONENTS NUMBER_OF_COMPONENTS)
 
     if(NUMBER_OF_COMPONENTS EQUAL 0)
@@ -78,11 +69,8 @@ macro(trace_dependency)
         endforeach()
     endif()
     
-    if(PACKAGE_CONTROLLER_NAMESPACED)
-        find_package(${PACKAGE_CONTROLLER_ALIAS_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} REQUIRED)
-    else()
-        find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS} REQUIRED)
-    endif()
+    find_package(${PACKAGE_CONTROLLER_NAME} ${VERSION_ARG} ${PACKAGE_CONTROLLER_VERSION} COMPONENTS ${PACKAGE_CONTROLLER_COMPONENTS} REQUIRED)
+
 endmacro()
 
 macro(trace_library)
