@@ -1,6 +1,6 @@
 # dep_tracer
 
-`trace_dependency(<NAME> <INSTALL_SCRIPT> [<VERSION>] [COMPONENTS ...] [USE_VSTOOLS] [NAMESPACED] [<ALIAS_NAME>])`:
+`trace_dependency(<NAME> <INSTALL_SCRIPT> [<VERSION>] [COMPONENTS ...] [USE_VSTOOLS])`:
 this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
@@ -9,8 +9,6 @@ Args:
 - VERSION: Optional, referred to the package version
 - COMPONENTS: Optional, referred to the package components, like Qt6 Widgets
 - USE_VSTOOLS: Optional, referred to use the vs compiler path
-- NAMESPACED: Optional, referred if you will find a package by namespace after installation
-- ALIAS_NAME: Optional, name of the namespaced package, is required if NAMESPACED is TRUE
 
 `trace_library(<NAME> <INSTALL_SCRIPT>)`:
 this function is used to search for a library, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
