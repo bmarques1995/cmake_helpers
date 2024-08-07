@@ -1,4 +1,4 @@
-if [ "$1" == "Debug" ] || [ "$1" == "Release" ] && [ ! -z "$2" ] && [ ! -z "$3"]; then
+if [ "$1" == "Debug" ] || [ "$1" == "Release" ] && [ ! -z "$2" ] && [ ! -z "$3" ]; then
     git clone --recursive https://github.com/openssl/openssl.git "$3/modules/openssl"
     cd "$3/modules/openssl"
     echo $(pwd)

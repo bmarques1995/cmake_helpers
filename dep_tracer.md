@@ -20,14 +20,20 @@ Args:
 
 Disclaimer: These macros use `CMAKE_BUILD_TYPE` to define the build type, Debug/Release, and `CMAKE_INSTALL_PREFIX` to define the binaries installation dir. These values will be sent to the builder as command line arguments.
 
-`trace_file(<NAME> <INSTALL_SCRIPT>)`:
+`trace_file(<NAME> <INSTALL_SCRIPT> <LOCATION> <EXTENSION>)`:
 this function is used to search for a file, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the file and install it.
 
 Args:
 - NAME: is the name of the file
-- INSTALL_SCRIPT: script used to download, compile and install the dependency, for Linux distros it calls bash for a `.sh` script, on Windows the supported files are `.cmd` and `.bat` for command prompt and `.ps1` for powershell.
+- INSTALL_SCRIPT: script used to download, compile and install the dependency, for Linux distros it calls bash for a `.sh` script, on Windows the supported 
+- LOCATION: parent directory to search the file
+- EXTENSION: extension of desired file
+
+`trace_installable_file(<NAME> <INSTALL_SCRIPT> <LOCATION> <EXTENSION>)`:
+Same for `trace_file`, but will compile a code instead of download it
+
+files are `.cmd` and `.bat` for command prompt and `.ps1` for powershell.
 
 All other functions are auxiliars and are not supposed to be used as separated functions/macros.
 
-`trace_installable_file(<NAME> <INSTALL_SCRIPT>)`:
-Same for `trace_file`, but will compile a code instead of download it
+
