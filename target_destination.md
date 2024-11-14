@@ -8,10 +8,12 @@ this function is used to set some args for a Target Component listed above:
 
 Args:
 - TARGET_NAME: is the name of the target
-- STANDARD_VERSION: is the C/CXX standard version.
+- STANDARD_VERSION: is the C/CXX standard version. A predefined list
+	- `[90, 99, 11, 17, 23]` for C
+	- `[98, 11, 14, 17, 20, 23, 26]` for C++
 - USES_C: Tell the cmake if the project uses C or CXX
 
-`target_installation_behaviour(CONFIG_FILE TARGET_NAME VERSION PROJECT_NAME NAMESPACE USE_SHARE HEADER_INPUT HEADER_OUTPUT EXTRA_HEADER_EXTENSION)`:
+`target_installation_behaviour(<CONFIG_FILE> <TARGET_NAME> <VERSION> <PROJECT_NAME> <NAMESPACE> [USE_SHARE] [HEADER_INPUT...] [HEADER_OUTPUT...] [EXTRA_HEADER_EXTENSION...])`:
 this function is used to set installation resources of a Target Component:
 
 Args:
@@ -20,7 +22,8 @@ Args:
 - VERSION: version of the package.
 - PROJECT_NAME: Name of the project.
 - NAMESPACE: Namespace of the target installation, the most common set is the project name.
-- USE_SHARE: Optional, defines if the config files will be saved on `${CMAKE_INSTALL_PREFIX}/lib/cmake` or `${CMAKE_INSTALL_PREFIX}/share/cmake`, the default value is false
-- HEADER_INPUT: Optional, defines the header files source folder, if is set must have the same size of the HEADER_OUTPUT, these directories should be wrapped by a `$<BUILD_INTERFACE:dir>`, and must end with a `/` character, for example `${CMAKE_CURRENT_SOURCE_DIR}/include/content/`
-- HEADER_OUTPUT: Optional, defines the header files installation folder, if is set must have the same size of the HEADER_INPUT, these directories should be wrapped by a `$<INSTALL_INTERFACE:dir>`
-- EXTRA_HEADER_EXTENSION_PATTERN: Optional, defines extensions patterns of header files to be installed, `.h`, `.hpp`, `.hh`, `.hxx`, `.h++`, `.i`, `.ipp`, `.ii`, `.ixx`, `.i++`, `.inl` and `.inc` extensions are covered by default and will install the headers automaticly if are the only extensions, the most usual extension pattern expected is `*.<extension>`, if the files don't have extensions, just pass `*` if usual, but keep in mind to organize the unextended file in a special folder to not copy source files, you can use more ellaborated regexes, but this I keep with you.
+- USE_SHARE: Defines if the config files will be saved on `${CMAKE_INSTALL_PREFIX}/lib/cmake` or `${CMAKE_INSTALL_PREFIX}/share/cmake`, the default value is false, meaning the that the config files will be saved in `${CMAKE_INSTALL_PREFIX}/lib/cmake`
+- HEADER_INPUT: Defines the header files source folder, if is set must have the same size of the HEADER_OUTPUT, these directories should be wrapped by a `$<BUILD_INTERFACE:dir>`, and must end with a `/` character, for example `${CMAKE_CURRENT_SOURCE_DIR}/include/content/`
+- HEADER_OUTPUT: Defines the header files installation folder, if is set must have the same size of the HEADER_INPUT, these directories should be wrapped by a `$<INSTALL_INTERFACE:dir>`
+- EXTRA_HEADER_EXTENSION_PATTERN: Defines extensions patterns of header files to be installed, `.h`, `.hpp`, `.hh`, `.hxx`, `.h++`, `.i`, `.ipp`, `.ii`, `.ixx`, `.i++`, `.inl` and `.inc` extensions are covered by default and will install the headers automaticly if are the only extensions, the most usual extension pattern expected is `*.<extension>`, if the files don't have extensions, just pass `*` if usual, but keep in mind to organize the unextended file in a special folder to not copy source files, you can use more ellaborated regexes, but this I keep with you.
+

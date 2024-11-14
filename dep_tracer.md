@@ -1,6 +1,6 @@
 # dep_tracer
 
-`trace_dependency(<NAME> <INSTALL_SCRIPT> [<VERSION>] [COMPONENTS ...] [USE_VSTOOLS] [COMPONENT_INFIX])`:
+`trace_dependency(<NAME> <INSTALL_SCRIPT> [VERSION] [COMPONENTS...] [USE_VSTOOLS] [<COMPONENT_INFIX>])`:
 this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
