@@ -2,7 +2,7 @@ macro(download_sources_from_git_repo)
 
     set(oneValueArgs "SOURCE_BASE_URL" "COMMIT_VALUE" "SOURCE_BASE_OUTPUT_DIR")
     set(multiValueArgs "SOURCE_INPUTS")
-    set(options)
+    set(options "FORCE_DOWNLOAD")
 
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     if((NOT DEFINED PACKAGE_SOURCE_INPUTS) OR
@@ -13,6 +13,10 @@ macro(download_sources_from_git_repo)
 
     if((NOT DEFINED PACKAGE_COMMIT_VALUE))
 		set(PACKAGE_COMMIT_VALUE "refs/heads/main")
+    endif()
+
+    if((NOT DEFINED PACKAGE_FORCE_DOWNLOAD))
+		set(PACKAGE_FORCE_DOWNLOAD OFF)
     endif()
 
     foreach(SOURCE_INPUT ${PACKAGE_SOURCE_INPUTS})
@@ -27,7 +31,7 @@ macro(download_sources_from_git_repo)
             find_file(SOURCE_FILE_FOUND ${FILE_NAME} PATHS ${PACKAGE_SOURCE_BASE_OUTPUT_DIR})
         endif()
 
-        if((NOT SOURCE_FILE_FOUND))
+        if((NOT SOURCE_FILE_FOUND) OR PACKAGE_FORCE_DOWNLOAD)
             set(INPUT_FILENAME "${PACKAGE_SOURCE_BASE_URL}/${PACKAGE_COMMIT_VALUE}/${SOURCE_INPUT}")
 		    file(DOWNLOAD ${INPUT_FILENAME} ${OUTPUT_FILENAME} SHOW_PROGRESS)
 		    message(STATUS "Downloaded ${SOURCE_INPUT} to ${OUTPUT_FILE}")
