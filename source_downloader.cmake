@@ -18,7 +18,14 @@ macro(download_sources_from_git_repo)
     foreach(SOURCE_INPUT ${PACKAGE_SOURCE_INPUTS})
         
         set(OUTPUT_FILENAME "${PACKAGE_SOURCE_BASE_OUTPUT_DIR}/${SOURCE_INPUT}")
-        find_file(SOURCE_FILE_FOUND PATHS ${PACKAGE_SOURCE_BASE_OUTPUT_DIR} ${SOURCE_INPUT})
+        
+        get_filename_component(FILE_NAME "${SOURCE_INPUT}" NAME)   # "my_header.h"
+        get_filename_component(FILE_DIR  "${SOURCE_INPUT}" DIRECTORY)  # "include"
+        if(${FILE_DIR})
+            find_file(SOURCE_FILE_FOUND ${FILE_NAME} PATHS ${PACKAGE_SOURCE_BASE_OUTPUT_DIR}/${FILE_DIR} )
+        else()
+            find_file(SOURCE_FILE_FOUND ${FILE_NAME} PATHS ${PACKAGE_SOURCE_BASE_OUTPUT_DIR})
+        endif()
 
         if((NOT SOURCE_FILE_FOUND))
             set(INPUT_FILENAME "${PACKAGE_SOURCE_BASE_URL}/${PACKAGE_COMMIT_VALUE}/${SOURCE_INPUT}")
