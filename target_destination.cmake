@@ -105,3 +105,42 @@ macro(target_installation_behaviour)
     endforeach()
 
 endmacro()
+
+macro(target_add_test)
+    set(oneValueArgs "TARGET_NAME" "SOURCE_DIR" "HEADER_EXTENSION" "SOURCE_EXTENSION" "GTEST_INSTALL_SCRIPT", "SUB_DIR")
+    set(options)
+    set(multiValueArgs "EXTRA_LINKED_LIBS", "EXTRA_INCLUDE_DIRS")
+    cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if((NOT DEFINED PACKAGE_TARGET_NAME) 
+        OR (NOT DEFINED PACKAGE_SOURCE_DIR)
+        OR (NOT DEFINED PACKAGE_SUB_DIR)
+        OR (NOT DEFINED PACKAGE_GTEST_INSTALL_SCRIPT))
+        message(FATAL_ERROR "SOURCE_DIR, TARGET_NAME and GTEST_INSTALL_SCRIPT are required arguments")
+    endif()
+
+    if(NOT DEFINED PACKAGE_HEADER_EXTENSION)
+        set(PACKAGE_HEADER_EXTENSION "hpp")
+    endif()
+    if(NOT DEFINED PACKAGE_SOURCE_EXTENSION)
+        set(PACKAGE_SOURCE_EXTENSION "cpp")
+    endif()
+
+    file(GLOB_RECURSE TESTS_HDRS RELATIVE ${PACKAGE_SOURCE_DIR} "${PACKAGE_SUB_DIR}/*.${PACKAGE_HEADER_EXTENSION}")
+	file(GLOB_RECURSE TESTS_SRCS RELATIVE ${PACKAGE_SOURCE_DIR} "${PACKAGE_SUB_DIR}/*.${PACKAGE_SOURCE_EXTENSION}")
+
+    trace_dependency(NAME GTest INSTALL_SCRIPT ${PACKAGE_GTEST_INSTALL_SCRIPT})
+
+	enable_testing()
+    add_executable(${PACKAGE_TARGET_NAME} ${TESTS_SRCS} ${TESTS_HDRS})
+	target_include_directories(${PACKAGE_TARGET_NAME} PRIVATE ${PACKAGE_EXTRA_INCLUDE_DIRS})
+    target_link_libraries(${PACKAGE_TARGET_NAME} PRIVATE GTest::gtest_main GTest::gtest GTest::gmock_main GTest::gmock ${PACKAGE_EXTRA_LINKED_LIBS})
+	set_cxx_project_standards(${PACKAGE_TARGET_NAME} 20 FALSE)
+	add_test(
+		${PACKAGE_TARGET_NAME}
+		${PACKAGE_TARGET_NAME}
+	)
+
+    unset(TESTS_SRCS CACHE)
+	unset(TESTS_HDRS CACHE)
+endmacro()

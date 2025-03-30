@@ -27,3 +27,16 @@ Args:
 - HEADER_OUTPUT: Defines the header files installation folder, if is set must have the same size of the HEADER_INPUT, these directories should be wrapped by a `$<INSTALL_INTERFACE:dir>`
 - EXTRA_HEADER_EXTENSION_PATTERN: Defines extensions patterns of header files to be installed, `.h`, `.hpp`, `.hh`, `.hxx`, `.h++`, `.i`, `.ipp`, `.ii`, `.ixx`, `.i++`, `.inl` and `.inc` extensions are covered by default and will install the headers automaticly if are the only extensions, the most usual extension pattern expected is `*.<extension>`, if the files don't have extensions, just pass `*` if usual, but keep in mind to organize the unextended file in a special folder to not copy source files, you can use more ellaborated regexes, but this I keep with you.
 
+`target_add_test(<TARGET_NAME> <SOURCE_DIR> <GTEST_INSTALL_SCRIPT> [<HEADER_EXTENSION>] [<SOURCE_EXTENSION>] [EXTRA_LINKED_LIBS...] [EXTRA_INCLUDE_DIRS...])`:
+this function is used to set installation resources of a Target Component:
+
+Args:
+
+- TARGET_NAME: is the name of the target
+- SOURCE_DIR: is the root directory where the project is located
+- SUB_DIR: is the sub directory where the headers and source files are located, based on source dir
+- GTEST_INSTALL_SCRIPT: is the location of the gtest script to install the lib
+- HEADER_EXTENSION: is the header extension, by default is `.hpp`
+- SOURCE_EXTENSION: is the source extension, by default is `.cpp`
+- EXTRA_LINKED_LIBS: represents all libs that will be linked in addition of gtest suit.
+- EXTRA_INCLUDE_DIRS: represents all include directories that will be added to the default path.
