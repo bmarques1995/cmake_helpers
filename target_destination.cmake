@@ -107,9 +107,9 @@ macro(target_installation_behaviour)
 endmacro()
 
 macro(target_add_test)
-    set(oneValueArgs "TARGET_NAME" "SOURCE_DIR" "HEADER_EXTENSION" "SOURCE_EXTENSION" "GTEST_INSTALL_SCRIPT", "SUB_DIR")
+    set(oneValueArgs "TARGET_NAME" "SOURCE_DIR" "HEADER_EXTENSION" "SOURCE_EXTENSION" "GTEST_INSTALL_SCRIPT" "SUB_DIR")
     set(options)
-    set(multiValueArgs "EXTRA_LINKED_LIBS", "EXTRA_INCLUDE_DIRS")
+    set(multiValueArgs "EXTRA_LINKED_LIBS" "EXTRA_INCLUDE_DIRS")
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if((NOT DEFINED PACKAGE_TARGET_NAME) 
