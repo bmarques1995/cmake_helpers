@@ -69,6 +69,7 @@ macro(download_remote_files)
 		    message(STATUS "Downloaded ${SOURCE_INPUT} to ${OUTPUT_FILENAME}")
         endif()
 	
+        unset(BINARY_FILE_FOUND CACHE)
     endforeach()
 
 endmacro()
