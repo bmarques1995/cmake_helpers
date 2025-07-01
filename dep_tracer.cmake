@@ -1,33 +1,47 @@
 function(validate_shell_script_extension FILE)
-    set(ALLOWED_EXTENSIONS "sh")
+    set(ALLOWED_EXTENSIONS "sh|py")
     if(WIN32)
-        set(ALLOWED_EXTENSIONS "cmd|bat|ps1")  # Add other extensions as needed
+        set(ALLOWED_EXTENSIONS "cmd|bat|ps1|py")  # Add other extensions as needed
     endif()
     string(REGEX MATCH "\\.(${ALLOWED_EXTENSIONS})$" EXT_VALIDATION_RESULT ${FILE})
     if(NOT EXT_VALIDATION_RESULT)
         
         if(WIN32)
-            message(FATAL_ERROR "The allowed extensions are: \".cmd\", \".bat\" and \".ps1\"")
+            message(FATAL_ERROR "The allowed extensions are: \".cmd\", \".bat\", \".ps1\" and \".py\"")
         else()
-            message(FATAL_ERROR "The only allowed extensions is: \".sh\"")
+            message(FATAL_ERROR "The only allowed extensions are: \".sh\" and \".py\"")
         endif()
     endif()
 endfunction()
 
 function(set_shell_program SCRIPT_FILENAME)
-    set(SCRIPT_RUNNER "bash" PARENT_SCOPE)
-    set(SCRIPT_ARG PARENT_SCOPE)
+    # Get the file extension
+    get_filename_component(SCRIPT_EXT "${SCRIPT_FILENAME}" EXT)
+    string(TOLOWER "${SCRIPT_EXT}" SCRIPT_EXT)
+    string(REPLACE "." "" SCRIPT_EXT "${SCRIPT_EXT}")
+
+
+    set(SCRIPT_RUNNER "bash")
+    set(SCRIPT_ARG "")
+
+    if(SCRIPT_EXT STREQUAL "py")
+        set(SCRIPT_RUNNER "python")
+        set(SCRIPT_ARG "")
+    endif()
+
     if(WIN32)
-        set(CMD_EXTENSIONS "cmd|bat")
-        string(REGEX MATCH "\\.(${CMD_EXTENSIONS})$" IS_CMD ${SCRIPT_FILENAME})
-        if(IS_CMD)
-            set(SCRIPT_RUNNER "cmd" PARENT_SCOPE)
-            set(SCRIPT_ARG "/c" PARENT_SCOPE)
-        else()
-            set(SCRIPT_RUNNER "powershell" PARENT_SCOPE)
-            set(SCRIPT_ARG "-File" PARENT_SCOPE)
+        if(SCRIPT_EXT STREQUAL "cmd" OR SCRIPT_EXT STREQUAL "bat")
+            set(SCRIPT_RUNNER "cmd")
+            set(SCRIPT_ARG "/c")
+        elseif(SCRIPT_EXT STREQUAL "ps1")
+            set(SCRIPT_RUNNER "powershell")
+            set(SCRIPT_ARG "-File")
         endif()
     endif()
+
+    # Export to parent scope
+    set(SCRIPT_RUNNER "${SCRIPT_RUNNER}" PARENT_SCOPE)
+    set(SCRIPT_ARG "${SCRIPT_ARG}" PARENT_SCOPE)
 endfunction()
 
 macro(trace_dependency)
