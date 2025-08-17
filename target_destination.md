@@ -41,10 +41,6 @@ Args:
 - EXTRA_LINKED_LIBS: represents all libs that will be linked in addition of gtest suit.
 - EXTRA_INCLUDE_DIRS: represents all include directories that will be added to the default path.
 
-`appen_shared_lib_prefix_path(TARGET_NAME)`:
+`append_rpath()`:
 
-this function is user to set the installation dir to unix(linux|freebsd|netbsd) shared libs:
-
-Args:
-
-- TARGET_NAME: is the name of the target
+this function is user to set the installation rpath:
