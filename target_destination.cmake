@@ -36,7 +36,6 @@ macro(append_rpath)
     SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
     SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
     SET(CMAKE_INSTALL_RPATH "\${ORIGIN}/../lib")
-    message(WARNING "RPATH set")
 endmacro()
 
 macro(target_installation_behaviour)
