@@ -32,6 +32,15 @@ macro(set_cxx_project_standards TARGET_NAME STANDARD_VERSION USES_C)
 
 endmacro()
 
+macro(appen_shared_lib_prefix_path TARGET_NAME)
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    set(BUILD_WITH_INSTALL_RPATH FALSE)
+    if(UNIX AND NOT APPLE)
+        set_target_properties(${TARGET_NAME} PROPERTIES
+            INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib64")
+    endif()
+endmacro()
+
 macro(target_installation_behaviour)
 
     set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE")
