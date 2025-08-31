@@ -13,7 +13,7 @@ Args:
 	- `[98, 11, 14, 17, 20, 23, 26]` for C++
 - USES_C: Tell the cmake if the project uses C or CXX
 
-`target_installation_behaviour(<CONFIG_FILE> <TARGET_NAME> <VERSION> <PROJECT_NAME> <NAMESPACE> [USE_SHARE] [HEADER_INPUT...] [HEADER_OUTPUT...] [EXTRA_HEADER_EXTENSION...])`:
+`target_installation_behaviour(<CONFIG_FILE> <TARGET_NAME> <VERSION> <PROJECT_NAME> <NAMESPACE> <COMPONENT> [USE_SHARE] [HEADER_INPUT...] [HEADER_OUTPUT...] [EXTRA_HEADER_EXTENSION...])`:
 this function is used to set installation resources of a Target Component:
 
 Args:
@@ -21,6 +21,7 @@ Args:
 - TARGET_NAME: is the name of the target
 - VERSION: version of the package.
 - PROJECT_NAME: Name of the project.
+- COMPONENT: Component name, used for packing.
 - NAMESPACE: Namespace of the target installation, the most common set is the project name.
 - USE_SHARE: Defines if the config files will be saved on `${CMAKE_INSTALL_PREFIX}/lib/cmake` or `${CMAKE_INSTALL_PREFIX}/share/cmake`, the default value is false, meaning the that the config files will be saved in `${CMAKE_INSTALL_PREFIX}/lib/cmake`
 - HEADER_INPUT: Defines the header files source folder, if is set must have the same size of the HEADER_OUTPUT, these directories should be wrapped by a `$<BUILD_INTERFACE:dir>`, and must end with a `/` character, for example `${CMAKE_CURRENT_SOURCE_DIR}/include/content/`
@@ -40,3 +41,7 @@ Args:
 - SOURCE_EXTENSION: is the source extension, by default is `.cpp`
 - EXTRA_LINKED_LIBS: represents all libs that will be linked in addition of gtest suit.
 - EXTRA_INCLUDE_DIRS: represents all include directories that will be added to the default path.
+
+`append_rpath()`:
+
+this function is user to set the installation rpath:
