@@ -1,11 +1,19 @@
 from package_helpers import clone_and_checkout, run, append_vs_ninja_host, append_paths
+import platform
 
 def build_qt_package(name, version, build_mode, install_prefix, module_destination, vs_compiler):
-    if not (build_mode and install_prefix and module_destination and vs_compiler):
+    os_name = platform.system().lower()
+    if os_name == "windows":
+        if not (vs_compiler):
+            print("Visual Studio compiler version is required on Windows.")
+            return
+    if not (build_mode and install_prefix and module_destination):
         print("Invalid build type or install path. Please provide either 'Debug' or 'Release', a valid prefix path and a valid Module Destination")
         return
 
-    append_vs_ninja_host(vs_compiler)
+    if os_name == "windows":
+        append_vs_ninja_host(vs_compiler)
+    
 
     print(f"Installing {name} with build mode: {build_mode}, install prefix: {install_prefix}, module destination: {module_destination}")
 

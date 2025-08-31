@@ -25,7 +25,11 @@ function(set_shell_program SCRIPT_FILENAME)
     set(SCRIPT_ARG "")
 
     if(SCRIPT_EXT STREQUAL "py")
-        set(SCRIPT_RUNNER "python")
+        if(WIN32)
+            set(SCRIPT_RUNNER "python")
+        elseif(LINUX)
+            set(SCRIPT_RUNNER "python3")
+        endif()
         set(SCRIPT_ARG "")
     endif()
 
