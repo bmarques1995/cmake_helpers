@@ -35,12 +35,12 @@ endmacro()
 macro(append_rpath)
     SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
     SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-    SET(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
+    SET(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/../lib64:\$ORIGIN/../lib32")
 endmacro()
 
 macro(target_installation_behaviour)
 
-    set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE")
+    set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE" "COMPONENT")
     set(options "USE_SHARE")
     set(multiValueArgs "HEADER_INPUT" "HEADER_OUTPUT" "EXTRA_HEADER_EXTENSION_PATTERN")
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -51,8 +51,9 @@ macro(target_installation_behaviour)
         OR (NOT DEFINED PACKAGE_CONFIG_FILE)
         OR (NOT DEFINED PACKAGE_VERSION)
         OR (NOT DEFINED PACKAGE_PROJECT_NAME)
+        OR (NOT DEFINED PACKAGE_COMPONENT)
         OR (NOT DEFINED PACKAGE_NAMESPACE))
-        message(FATAL_ERROR "CONFIG_FILE, TARGET_NAME, VERSION, PROJECT_NAME and NAMESPACE are required arguments")
+        message(FATAL_ERROR "CONFIG_FILE, TARGET_NAME, VERSION, COMPONENT, PROJECT_NAME and NAMESPACE are required arguments")
     endif()
 
     set(CONFIG_BASE_DIR "lib/cmake/")
@@ -85,7 +86,8 @@ macro(target_installation_behaviour)
         DESTINATION "${TARGET_CONFIG_INSTALL_DIR}")
 
     install(TARGETS ${PACKAGE_TARGET_NAME}
-            EXPORT ${TARGET_TARGETS_EXPORT_NAME} 
+            EXPORT ${TARGET_TARGETS_EXPORT_NAME}
+            COMPONENT ${PACKAGE_COMPONENT}
             RUNTIME DESTINATION "bin"
             ARCHIVE DESTINATION "lib"
             LIBRARY DESTINATION "lib")
