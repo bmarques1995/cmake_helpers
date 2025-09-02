@@ -1,6 +1,6 @@
 # dep_tracer
 
-`trace_dependency(<NAME> <INSTALL_SCRIPT> [VERSION] [COMPONENTS...] [USE_VSTOOLS] [LIMIT_SEARCH_PATHS] [<COMPONENT_INFIX>])`:
+`trace_dependency(<NAME> <INSTALL_SCRIPT> [VERSION] [COMPONENTS...] [USE_VSTOOLS] [LIMIT_SEARCH_PATHS] [<COMPONENT_INFIX>] [<EXTRA_SUFFIXES>])`:
 this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
@@ -11,6 +11,7 @@ Args:
 - USE_VSTOOLS: Optional, referred to use the vs compiler path
 - LIMIT_SEARCH_PATHS: Optional, referred to search only in the INSTALL_PREFIX
 - COMPONENT_INFIX: Optional, referred to the package component infix pattern, where the default value is empty, when you call `find_package(<NAME> COMPONENTS <COMPONENTS>)`, a set of variable is stored, and each package follow one pattern, the most usual is empty, for example `find_package(Qt6 COMPONENTS Core)` will produce the variable `Qt6Core_FOUND`, but in some cases, it need an infix to separate the package name to the component name, for example `find_package(Boost COMPONENTS System)` will produce the variable `Boost_System_FOUND`.
+- EXTRA_SUFFIXES: Optional, add extra search suffixes, ignored if LIMIT_SEARCH_PATH is false.
 
 `trace_library(<NAME> <INSTALL_SCRIPT> [USE_VSTOOLS] [LIMIT_SEARCH_PATHS])`:
 this function is used to search for a library, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
