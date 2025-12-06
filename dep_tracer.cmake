@@ -1,6 +1,6 @@
 function(validate_shell_script_extension FILE)
     
-    set(SHARED_EXTENSIONS "py|cmake\\.json")
+    set(SHARED_EXTENSIONS "py|cmake\\.json|custom\\.json")
     set(ALLOWED_EXTENSIONS "sh|${SHARED_EXTENSIONS}")
     message(STATUS "FILE: ${FILE}")
     if(WIN32)
@@ -38,6 +38,11 @@ function(set_shell_program SCRIPT_FILENAME PYTHON_NAME_SUFFIX)
     endif()
 
     if(SCRIPT_EXT STREQUAL "cmakejson")
+		set(SCRIPT_RUNNER "RepoFetcher")
+		set(SCRIPT_ARG "")
+	endif()
+
+    if(SCRIPT_EXT STREQUAL "customjson")
 		set(SCRIPT_RUNNER "RepoFetcher")
 		set(SCRIPT_ARG "")
 	endif()
