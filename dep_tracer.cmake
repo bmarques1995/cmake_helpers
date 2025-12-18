@@ -23,7 +23,6 @@ function(set_shell_program SCRIPT_FILENAME PYTHON_NAME_SUFFIX)
     string(TOLOWER "${SCRIPT_EXT}" SCRIPT_EXT)
     string(REPLACE "." "" SCRIPT_EXT "${SCRIPT_EXT}")
 
-
     set(SCRIPT_RUNNER "bash")
     set(SCRIPT_ARG "")
 
@@ -43,6 +42,11 @@ function(set_shell_program SCRIPT_FILENAME PYTHON_NAME_SUFFIX)
 	endif()
 
     if(SCRIPT_EXT STREQUAL "customjson")
+		set(SCRIPT_RUNNER "RepoFetcher")
+		set(SCRIPT_ARG "")
+	endif()
+
+    if(SCRIPT_EXT STREQUAL "mesonjson")
 		set(SCRIPT_RUNNER "RepoFetcher")
 		set(SCRIPT_ARG "")
 	endif()
