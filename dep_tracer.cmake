@@ -304,7 +304,7 @@ macro(download_package INSTALL_SCRIPT USE_VSTOOLS PYTHON_NAME_SUFFIX WORKING_DIR
     endif()
     set(DIR_PREFIX "")
     if(NOT WIN32)
-        if(NOT WORKING_DIR STREQUAL ".")
+        if(NOT (${WORKING_DIR} STREQUAL "."))
             set(DIR_PREFIX "${WORKING_DIR}")
             if(NOT DIR_PREFIX MATCHES "/$")
                 set(DIR_PREFIX "${DIR_PREFIX}/")
