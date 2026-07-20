@@ -42,6 +42,12 @@ Args:
 - EXTRA_LINKED_LIBS: represents all libs that will be linked in addition of gtest suit.
 - EXTRA_INCLUDE_DIRS: represents all include directories that will be added to the default path.
 
-`append_rpath()`:
+`append_rpath(<TARGET_NAME> [BUILD_EXTRA_PATH...] [INSTALL_EXTRA_PATH...])`:
 
 this function is user to set the installation rpath:
+
+Args:
+
+- TARGET_NAME: is the name of the target
+- BUILD_EXTRA_PATH: extra runpaths for the build version
+- INSTALL_EXTRA_PATH: extra runpaths for the install version

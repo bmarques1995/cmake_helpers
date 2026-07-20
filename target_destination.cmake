@@ -45,18 +45,35 @@ macro(set_cxx_project_standards TARGET_NAME STANDARD_VERSION USES_C)
 endmacro()
 
 macro(append_rpath)
-    set(oneValueArgs)
+    set(oneValueArgs "TARGET_NAME")
     set(options)
-    set(multiValueArgs "EXTRA_PATH")
+    set(multiValueArgs "BUILD_EXTRA_PATH" "INSTALL_EXTRA_PATH")
     cmake_parse_arguments(EXEC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-    set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/../lib64:\$ORIGIN/../lib32:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib64:${CMAKE_PREFIX_PATH}/lib32:${PROJECT_BINARY_DIR}/lib:${PROJECT_BINARY_DIR}/lib64:${PROJECT_BINARY_DIR}/lib32")
-    if(EXEC_EXTRA_PATH)
-        foreach(PATH_ITEM IN LISTS EXEC_EXTRA_PATH)
-            set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${PATH_ITEM}")
+
+    if(NOT DEFINED EXEC_TARGET_NAME)
+        message(FATAL_ERROR "TARGET_NAME is a required argument")
+    endif()
+
+    set(RPATH_LIST "\$ORIGIN/../lib:\$ORIGIN/../lib64:\$ORIGIN/../lib32:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib64:${CMAKE_PREFIX_PATH}/lib32:${PROJECT_BINARY_DIR}/lib:${PROJECT_BINARY_DIR}/lib64:${PROJECT_BINARY_DIR}/lib32")
+    set(TEMP_BUILD_RPATH ${RPATH_LIST})
+    set(TEMP_INSTALL_RPATH ${RPATH_LIST})
+    if(EXEC_BUILD_EXTRA_PATH)
+        foreach(PATH_ITEM IN LISTS EXEC_BUILD_EXTRA_PATH)
+            set(TEMP_BUILD_RPATH "${TEMP_BUILD_RPATH}:${PATH_ITEM}")
         endforeach()
     endif()
+    if(EXEC_INSTALL_EXTRA_PATH)
+        foreach(PATH_ITEM IN LISTS EXEC_INSTALL_EXTRA_PATH)
+            set(TEMP_INSTALL_RPATH "${TEMP_INSTALL_RPATH}:${PATH_ITEM}")
+        endforeach()
+    endif()
+    set_target_properties(${EXEC_TARGET_NAME} PROPERTIES
+        BUILD_WITH_INSTALL_RPATH FALSE
+        BUILD_RPATH ${TEMP_BUILD_RPATH}
+        BUILD_RPATH_USE_LINK_PATH FALSE
+        INSTALL_RPATH ${TEMP_INSTALL_RPATH}
+        INSTALL_RPATH_USE_LINK_PATH FALSE
+    )
 endmacro()
 
 macro(target_installation_behaviour)
