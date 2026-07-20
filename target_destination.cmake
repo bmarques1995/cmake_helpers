@@ -50,7 +50,7 @@ macro(append_rpath)
     set(multiValueArgs "EXTRA_PATH")
     cmake_parse_arguments(EXEC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
     set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/../lib64:\$ORIGIN/../lib32:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib64:${CMAKE_PREFIX_PATH}/lib32:${PROJECT_BINARY_DIR}/lib:${PROJECT_BINARY_DIR}/lib64:${PROJECT_BINARY_DIR}/lib32")
     if(EXEC_EXTRA_PATH)
         foreach(PATH_ITEM IN LISTS EXEC_EXTRA_PATH)
@@ -62,7 +62,7 @@ endmacro()
 macro(target_installation_behaviour)
 
     set(oneValueArgs "CONFIG_FILE" "TARGET_NAME" "VERSION" "PROJECT_NAME" "NAMESPACE" "COMPONENT")
-    set(options "USE_SHARE")
+    set(options "USE_SHARE" "INSTALL_RUNTIME")
     set(multiValueArgs "HEADER_INPUT" "HEADER_OUTPUT" "EXTRA_HEADER_EXTENSION_PATTERN")
     cmake_parse_arguments(PACKAGE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -80,6 +80,11 @@ macro(target_installation_behaviour)
     set(CONFIG_BASE_DIR "lib/cmake/")
     if(PACKAGE_USE_SHARE)
         set(CONFIG_BASE_DIR "share/cmake/")
+    endif()
+
+    set(INSTALL_RUNTIME_DEPS OFF)
+    if(PACKAGE_INSTALL_RUNTIME)
+        set(INSTALL_RUNTIME_DEPS ON)
     endif()
 
     set(TARGET_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
@@ -105,7 +110,21 @@ macro(target_installation_behaviour)
         EXPORT "${TARGET_TARGETS_EXPORT_NAME}"
         NAMESPACE "${TARGET_NAMESPACE}"
         DESTINATION "${TARGET_CONFIG_INSTALL_DIR}")
+    
+    if(INSTALL_RUNTIME_DEPS)
 
+        install(TARGETS ${PACKAGE_TARGET_NAME}
+            RUNTIME_DEPENDENCY_SET ${PACKAGE_TARGET_NAME}_runtime_deps
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+        )
+
+        install(RUNTIME_DEPENDENCY_SET ${PACKAGE_TARGET_NAME}_runtime_deps
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+        )
+
+    endif()
     install(TARGETS ${PACKAGE_TARGET_NAME}
             EXPORT ${TARGET_TARGETS_EXPORT_NAME}
             RUNTIME DESTINATION "bin"
@@ -120,6 +139,7 @@ macro(target_installation_behaviour)
     if(NOT (${IN_LENGTH} EQUAL ${OUT_LENGTH}))
         message(FATAL_ERROR "Each input header folder must be associated to an output header folder")
     endif()
+
 
 
     foreach(INPUT_FOLDER OUTPUT_FOLDER IN ZIP_LISTS PACKAGE_HEADER_INPUT PACKAGE_HEADER_OUTPUT)
