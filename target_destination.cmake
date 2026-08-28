@@ -44,6 +44,22 @@ macro(set_cxx_project_standards TARGET_NAME STANDARD_VERSION USES_C)
 
 endmacro()
 
+function(set_artifacts_dir TARGET_NAME OUTPUT_PREFIX_DIR)
+    set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_PREFIX_DIR}/bin")
+    set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_PREFIX_DIR}/bin")
+    set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_PREFIX_DIR}/bin")
+    set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_PREFIX_DIR}/lib")
+    set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_PREFIX_DIR}/lib")
+    set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_PREFIX_DIR}/lib")
+    set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_PREFIX_DIR}/lib")
+    set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_PREFIX_DIR}/lib")
+    set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_PREFIX_DIR}/lib")
+endfunction()
+
+function(set_msvc_target_utf8 TARGET_NAME)
+    target_compile_options(${TARGET_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
+endfunction()
+
 macro(append_rpath)
     set(oneValueArgs "TARGET_NAME")
     set(options)

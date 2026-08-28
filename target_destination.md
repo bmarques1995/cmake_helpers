@@ -3,7 +3,6 @@
 `set_cxx_project_standards(TARGET_NAME STANDARD_VERSION USES_C)`:
 this function is used to set some args for a Target Component listed above:
 
-- RUNTIME/LIBRARY/ARCHIVE Destination: this is the destination of the build result
 - Standard: Set the C/CXX standard of the project 
 
 Args:
@@ -12,6 +11,21 @@ Args:
 	- `[90, 99, 11, 17, 23]` for C
 	- `[98, 11, 14, 17, 20, 23, 26]` for C++
 - USES_C: Tell the cmake if the project uses C or CXX
+
+`set_artifacts_dir(TARGET_NAME OUTPUT_PREFIX_DIR)`:
+this function is used to set some args for a Target Component listed above:
+
+- RUNTIME/LIBRARY/ARCHIVE Destination: this is the destination of the build result
+
+Args:
+- TARGET_NAME: is the name of the target
+- OUTPUT_PREFIX_DIR: Prefix for artifacts. Example: C:\cpp\proj\build , for C:\cpp\proj\build\bin\prog.exe
+
+`set_msvc_target_utf8(TARGET_NAME)`:
+this function is used to set a MSVC target compilation to utf-8
+
+Args:
+- TARGET_NAME: is the name of the target
 
 `target_installation_behaviour(<CONFIG_FILE> <TARGET_NAME> <VERSION> <PROJECT_NAME> <NAMESPACE> <COMPONENT> [USE_SHARE] [HEADER_INPUT...] [HEADER_OUTPUT...] [EXTRA_HEADER_EXTENSION...])`:
 this function is used to set installation resources of a Target Component:
