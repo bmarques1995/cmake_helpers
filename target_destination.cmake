@@ -12,28 +12,6 @@ macro(set_cxx_project_standards TARGET_NAME STANDARD_VERSION USES_C)
         endif()
     endif()
 
-    if(WIN32)
-        set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_PREFIX_PATH}/bin")
-        set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_PREFIX_PATH}/bin")
-        set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_PREFIX_PATH}/bin")
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_PREFIX_PATH}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_PREFIX_PATH}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_PREFIX_PATH}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_PREFIX_PATH}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_PREFIX_PATH}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_PREFIX_PATH}/lib")
-    else()
-        set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-        set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/bin")
-        set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/bin")
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/lib")
-        set_target_properties(${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/lib")
-    endif()
-
     if(USES_C)
         set_target_properties(${TARGET_NAME} PROPERTIES LINKER_LANGUAGE C)
         set_target_properties(${TARGET_NAME} PROPERTIES C_STANDARD ${STANDARD_VERSION})
@@ -173,8 +151,6 @@ macro(target_installation_behaviour)
         message(FATAL_ERROR "Each input header folder must be associated to an output header folder")
     endif()
 
-
-
     foreach(INPUT_FOLDER OUTPUT_FOLDER IN ZIP_LISTS PACKAGE_HEADER_INPUT PACKAGE_HEADER_OUTPUT)
         install(DIRECTORY ${INPUT_FOLDER}
                 DESTINATION ${OUTPUT_FOLDER}
@@ -228,3 +204,44 @@ macro(target_add_test)
     unset(TESTS_SRCS CACHE)
 	unset(TESTS_HDRS CACHE)
 endmacro()
+
+function(deploy_runtime_dependencies TARGET_NAME)
+    if (WIN32)
+        add_custom_command(
+            TARGET ${TARGET_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_RUNTIME_DLLS:${TARGET_NAME}>
+                $<TARGET_FILE_DIR:${TARGET_NAME}>
+            COMMAND_EXPAND_LISTS
+        )
+        install(
+            FILES $<TARGET_RUNTIME_DLLS:${TARGET_NAME}>
+            DESTINATION bin
+        )
+    endif()
+endfunction()
+
+function(install_runtime_dependencies_for_libs)
+    if(UNIX)
+        set(oneValueArgs)
+        set(options)
+        set(multiValueArgs "TARGETS")
+        cmake_parse_arguments(INSTALLER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+        if(NOT DEFINED INSTALLER_TARGETS)
+            message(FATAL_ERROR "TARGETS is required, at least one target must be specified")
+        endif()
+
+        foreach(TARGET ${INSTALLER_TARGETS})
+            if(NOT TARGET "${TARGET}")
+                message(FATAL_ERROR "Target '${TARGET}' não existe")
+            endif()
+
+            get_target_property(TARGET_TYPE "${TARGET}" TYPE)
+
+            if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
+                install(FILES $<TARGET_FILE:${TARGET}> DESTINATION lib)
+            endif()
+        endforeach()
+    endif()
+endfunction()

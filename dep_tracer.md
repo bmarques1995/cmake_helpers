@@ -1,7 +1,8 @@
 # dep_tracer
 
 `trace_dependency(<NAME> <INSTALL_SCRIPT> [VERSION] [COMPONENTS...] [USE_VSTOOLS] [LIMIT_SEARCH_PATHS] [<COMPONENT_INFIX>] [<EXTRA_SUFFIXES>] [<PYTHON_SUFFIX_NAME>] [<WORKING_DIR>] [<CUSTOM_SEARCH_DIR>])`:
-this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
+
+This function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
 - NAME: is the name of the dependency
@@ -17,7 +18,8 @@ Args:
 - CUSTOM_SEARCH_DIR: Optional, enables the cmake to search a lib on a custom dir, example OpenSSL
 
 `trace_library(<NAME> <INSTALL_SCRIPT> [USE_VSTOOLS] [LIMIT_SEARCH_PATHS] [<PYTHON_SUFFIX_NAME>] [<WORKING_DIR>] [<CUSTOM_SEARCH_DIR>])`:
-this function is used to search for a library, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
+
+This function is used to search for a library, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 Uses the same principle of the `trace_dependency`.
 
 Args:
@@ -32,7 +34,8 @@ Args:
 Disclaimer: These macros use `CMAKE_BUILD_TYPE` to define the build type, Debug/Release, and `CMAKE_INSTALL_PREFIX` to define the binaries installation dir. These values will be sent to the builder as command line arguments.
 
 `trace_file(<NAME> <INSTALL_SCRIPT> <LOCATION> <EXTENSION> [LIMIT_SEARCH_PATHS]  [<PYTHON_SUFFIX_NAME>] [<WORKING_DIR>])`:
-this function is used to search for a file, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the file and install it.
+
+This function is used to search for a file, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the file and install it.
 
 Args:
 - NAME: is the name of the file
@@ -44,6 +47,7 @@ Args:
 - WORKING_DIR: Optional, set the directory where the dependency fetcher is located
 
 `trace_installable_file(<NAME> <INSTALL_SCRIPT> <LOCATION> <EXTENSION> [LIMIT_SEARCH_PATHS] [<PYTHON_SUFFIX_NAME>] [<WORKING_DIR>])`:
+
 Same for `trace_file`, but will compile a code instead of download it
 
 All other functions are auxiliars and are not supposed to be used as separated functions/macros.

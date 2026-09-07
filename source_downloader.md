@@ -1,7 +1,8 @@
 # source_downloader
 
 `download_sources_from_git_repo(<SOURCE_BASE_URL> <SOURCE_BASE_OUTPUT_DIR> SOURCE_INPUTS... [<COMMIT_VALUE>] [FORCE_DOWNLOAD])`:
-this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
+
+This function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
 - SOURCE_BASE_URL:  Referred to the base url, that will compose the file location.
@@ -11,7 +12,8 @@ Args:
 - FORCE_DOWNLOAD: Optional, used to force the download, even if the file is found
 
 `download_remote_files(<SOURCE_BASE_OUTPUT_DIR> SOURCE_INPUTS... [FORCE_DOWNLOAD])`:
-this function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
+
+This function is used to search for a package, if it is found the macro is aborted, but if it was not found, the macro will call an install script to clone the dependency and install it.
 
 Args:
 - SOURCE_BASE_OUTPUT_DIR: Referred to the output directory location.

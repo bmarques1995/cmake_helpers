@@ -1,7 +1,8 @@
 # target_destination
 
 `set_cxx_project_standards(TARGET_NAME STANDARD_VERSION USES_C)`:
-this function is used to set some args for a Target Component listed above:
+
+This function is used to set some args for a Target Component listed above:
 
 - Standard: Set the C/CXX standard of the project 
 
@@ -13,7 +14,8 @@ Args:
 - USES_C: Tell the cmake if the project uses C or CXX
 
 `set_artifacts_dir(TARGET_NAME OUTPUT_PREFIX_DIR)`:
-this function is used to set some args for a Target Component listed above:
+
+This function is used to set some args for a Target Component listed above:
 
 - RUNTIME/LIBRARY/ARCHIVE Destination: this is the destination of the build result
 
@@ -22,13 +24,15 @@ Args:
 - OUTPUT_PREFIX_DIR: Prefix for artifacts. Example: C:\cpp\proj\build , for C:\cpp\proj\build\bin\prog.exe
 
 `set_msvc_target_utf8(TARGET_NAME)`:
-this function is used to set a MSVC target compilation to utf-8
+
+This function is used to set a MSVC target compilation to utf-8
 
 Args:
 - TARGET_NAME: is the name of the target
 
 `target_installation_behaviour(<CONFIG_FILE> <TARGET_NAME> <VERSION> <PROJECT_NAME> <NAMESPACE> <COMPONENT> [USE_SHARE] [HEADER_INPUT...] [HEADER_OUTPUT...] [EXTRA_HEADER_EXTENSION...])`:
-this function is used to set installation resources of a Target Component:
+
+This function is used to set installation resources of a Target Component:
 
 Args:
 - CONFIG_FILE: file that will be use in the function `configure_file` of cmake, that will generate the targets
@@ -43,7 +47,8 @@ Args:
 - EXTRA_HEADER_EXTENSION_PATTERN: Defines extensions patterns of header files to be installed, `.h`, `.hpp`, `.hh`, `.hxx`, `.h++`, `.i`, `.ipp`, `.ii`, `.ixx`, `.i++`, `.inl` and `.inc` extensions are covered by default and will install the headers automaticly if are the only extensions, the most usual extension pattern expected is `*.<extension>`, if the files don't have extensions, just pass `*` if usual, but keep in mind to organize the unextended file in a special folder to not copy source files, you can use more ellaborated regexes, but this I keep with you.
 
 `target_add_test(<TARGET_NAME> <SOURCE_DIR> <GTEST_INSTALL_SCRIPT> [<HEADER_EXTENSION>] [<SOURCE_EXTENSION>] [EXTRA_LINKED_LIBS...] [EXTRA_INCLUDE_DIRS...])`:
-this function is used to set installation resources of a Target Component:
+
+This function is used to set installation resources of a Target Component:
 
 Args:
 
@@ -58,10 +63,24 @@ Args:
 
 `append_rpath(<TARGET_NAME> [BUILD_EXTRA_PATH...] [INSTALL_EXTRA_PATH...])`:
 
-this function is user to set the installation rpath:
+This function is user to set the installation rpath:
 
 Args:
 
 - TARGET_NAME: is the name of the target
 - BUILD_EXTRA_PATH: extra runpaths for the build version
 - INSTALL_EXTRA_PATH: extra runpaths for the install version
+
+`deploy_runtime_dependencies(TARGET_NAME)`:
+
+This function is used to copy the DLLs to the bin dir (Windows Only)
+
+Args:
+- TARGET_NAME: is the name of the target
+
+`install_runtime_dependencies_for_libs(TARGETS...)`:
+
+This function copies all the shared libraries to the 
+
+Args:
+- TARGETS: name of libs, as cmake targets, example `fmt::fmt`, to be installed with the project files
